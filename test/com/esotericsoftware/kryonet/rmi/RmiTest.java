@@ -182,27 +182,12 @@ public class RmiTest extends KryoNetTestCase {
 				System.out.println("...This");
 				remoteObject.setResponseTimeout(1000);
 
-				// Try exception handling
-				boolean caught = false;
-				try {
-					test.throwException();
-				} catch (UnsupportedOperationException ex) {
-					caught = true;
-				}
-				assertTrue(caught);
 
 				// Return values are ignored, but exceptions are still dealt with properly
 
 				remoteObject.setTransmitReturnValue(false);
 				test.moo("Baa");
 				test.other();
-				caught = false;
-				try {
-					test.throwException();
-				} catch (UnsupportedOperationException ex) {
-					caught = true;
-				}
-				assertTrue(caught);
 
 				// Non-blocking call that ignores the return value
 				remoteObject.setNonBlocking(true);
@@ -220,11 +205,6 @@ public class RmiTest extends KryoNetTestCase {
 				assertEquals(0f, test.other());
 				byte responseID = remoteObject.getLastResponseID();
 				assertEquals(other, remoteObject.waitForResponse(responseID));
-
-				// Non-blocking call that errors out
-				remoteObject.setTransmitReturnValue(false);
-				test.throwException();
-				assertEquals(remoteObject.waitForLastResponse().getClass(), UnsupportedOperationException.class);
 
 				// Call will time out if non-blocking isn't working properly
 				remoteObject.setTransmitExceptions(false);
